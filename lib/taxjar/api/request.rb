@@ -42,7 +42,7 @@ module Taxjar
       private
 
         def build_http_client
-          http_client = HTTP.timeout(@http_timeout).headers(headers)
+          http_client = @http_timeout.empty? ? HTTP.headers(headers) : HTTP.timeout(@http_timeout).headers(headers)
           http_client = http_client.via(*client.http_proxy) if client.http_proxy
           http_client
         end
@@ -59,6 +59,7 @@ module Taxjar
           @http_timeout[:write] = @options[:timeout]
           @http_timeout[:connect] = @options[:timeout]
           @http_timeout[:read] = @options[:timeout]
+          @http_timeout.compact!
         end
 
         def symbolize_keys!(object)
